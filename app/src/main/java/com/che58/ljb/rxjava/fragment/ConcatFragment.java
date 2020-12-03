@@ -22,18 +22,20 @@ import butterknife.ButterKnife;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 /**
- * merge操作符
+ * contact操作符
  * 可以将多个Observables的输出合并，就好像它们是一个单个的Observable一样
  * <p/>
  * Demo:模拟先读取(1s)本地缓存数据，再读取(3s)网络数据
  * Created by zjh on 2016/3/26.
  */
-public class MergeFragment extends RxFragment {
+public class ConcatFragment extends RxFragment {
     private static final String LOCATION = "location:";
+    private static final String NET = "net:";
 
     @Bind(R.id.view_load)
     ProgressWheel loadView;
@@ -44,7 +46,7 @@ public class MergeFragment extends RxFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_merge, null);
+        View view = inflater.inflate(R.layout.fragment_concat, null);
         ButterKnife.bind(this, view);
         return view;
     }
@@ -52,11 +54,12 @@ public class MergeFragment extends RxFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mergeDemo();
+        concatDemo();
     }
 
-    private void mergeDemo() {
-        Observable.merge(
+
+    private void concatDemo() {
+        Observable.concat(
                 getDataFromLocation(),
                 getDataFromNet()
         ).compose(this.<List<Contacter>>bindToLifecycle())
@@ -70,9 +73,15 @@ public class MergeFragment extends RxFragment {
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
-
+                        XgoLog.e(throwable.getMessage());
+                    }
+                }, new Action0() {
+                    @Override
+                    public void call() {
+                        XgoLog.d("onCompleted()");
                     }
                 });
+
     }
 
     private void initPage(List<Contacter> contacters) {
@@ -92,9 +101,10 @@ public class MergeFragment extends RxFragment {
                 }
 
                 ArrayList<Contacter> contacters = new ArrayList<>();
-                contacters.add(new Contacter("net:Zeus"));
-                contacters.add(new Contacter("net:Athena"));
-                contacters.add(new Contacter("net:Prometheus"));
+                contacters.add(new Contacter(NET + "Zeus"));
+                contacters.add(new Contacter(NET + "Athena"));
+                contacters.add(new Contacter(NET + "Prometheus"));
+               // subscriber.onError(new Throwable("模拟出错"));
                 subscriber.onNext(contacters);
                 subscriber.onCompleted();
             }

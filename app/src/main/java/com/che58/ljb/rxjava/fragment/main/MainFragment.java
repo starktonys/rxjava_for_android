@@ -11,7 +11,7 @@ import com.che58.ljb.rxjava.R;
 import com.che58.ljb.rxjava.fragment.BufferFragment;
 import com.che58.ljb.rxjava.fragment.CheckBoxUpdateFragment;
 import com.che58.ljb.rxjava.fragment.LoopFragment;
-import com.che58.ljb.rxjava.fragment.MergeFragment;
+import com.che58.ljb.rxjava.fragment.ConcatFragment;
 import com.che58.ljb.rxjava.fragment.Net2Fragment;
 import com.che58.ljb.rxjava.fragment.PublishSubjectFragment;
 import com.che58.ljb.rxjava.fragment.ReuseSubscriberFragment;
@@ -74,9 +74,9 @@ public class MainFragment extends Fragment {
         open(new ZipFragment());
     }
 
-    @OnClick(R.id.btn_merge)
-    void btn_merage() {
-        open(new MergeFragment());
+    @OnClick(R.id.btn_concat)
+    void btn_concat() {
+        open(new ConcatFragment());
     }
 
     @OnClick(R.id.btn_loop)
@@ -107,7 +107,7 @@ public class MainFragment extends Fragment {
      * 开启新的Fragment
      */
     private void open(Fragment fragment) {
-        final String tag = fragment.getClass().toString();
+        final String tag = fragment.getClass().getName();
         getActivity().getSupportFragmentManager()
                 .beginTransaction()
                 .addToBackStack(tag)
